@@ -1,0 +1,28 @@
+{
+  "name": "vonder-express",
+  "version": "1.0.0",
+  "description": "bridge von (bkc) to xvon (bsc)",
+  "main": "truffle-config.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "flatten": "truffle-flattener contracts/Express.sol > flattened/Express.sol"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@openzeppelin/contracts": "^3.4.0",
+    "truffle": "^5.1.58",
+    "truffle-flattener": "^1.5.0"
+  },
+  "devDependencies": {
+    "@truffle/hdwallet-provider": "^1.4.3",
+    "chai": "^4.2.0",
+    "ethereum-waffle": "^3.0.0",
+    "ethers": "^5.0.14",
+    "solidity-coverage": "^0.7.13",
+    "truffle-plugin-verify": "^0.5.11",
+    "web3": "^1.5.1"
+  }
+}

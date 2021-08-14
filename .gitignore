@@ -1,0 +1,17 @@
+/node_modules/
+/build/
+
+node_modules
+yarn.lock
+
+cache
+artifacts
+coverage
+coverage.json
+
+.secret
+/migrations/
+/flattened/
+
+deploy.log
+
