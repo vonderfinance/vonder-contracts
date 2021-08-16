@@ -9,6 +9,11 @@ const binanceProvider = new HDWalletProvider({
     providerOrUrl: `https://data-seed-prebsc-2-s1.binance.org:8545`
 });
 
+const binanceMainnetProvider = new HDWalletProvider({
+    privateKeys: privateKeys,
+    providerOrUrl: `https://bsc-dataseed2.defibit.io`
+});
+
 const bitkubMainnetProvider = new HDWalletProvider({
     privateKeys: mainnetBkcPrivateKeys,
     providerOrUrl: `https://rpc.bitkubchain.io`
@@ -44,13 +49,13 @@ module.exports = {
             gasPrice: Web3.utils.toWei('10', 'gwei'),
             skipDryRun: true,
         },
-        // bkcMainnet: {
-        //     provider: () => bitkubMainnetProvider,
-        //     network_id: '96',
-        //     gas: 5500000,
-        //     gasPrice: Web3.utils.toWei('5', 'gwei'),
-        //     skipDryRun: true,
-        // },
+        bkcMainnet: {
+            provider: () => bitkubMainnetProvider,
+            network_id: '96',
+            gas: 5500000,
+            gasPrice: Web3.utils.toWei('5', 'gwei'),
+            skipDryRun: true,
+        },
         bkcTestnet: {
             provider: () => bitkubTestnetProvider,
             network_id: '25925',
