@@ -28,38 +28,38 @@ contract Express is Ownable {
     }
 
     constructor(
-        address _dopple,
-        address _doppleX
+        address _VON,
+        address _XVON
         // address _burnTo
     ) public {
-        dopple = _dopple;
-        doppleX = _doppleX;
+        dopple = _VON;
+        doppleX = _XVON;
         // burnTo = _burnTo;
     }
 
     function adminEmergencyWithdraw(uint256 _amount) external onlyOwner {
         require(_amount > 0, "Should not be zero");
 
-        IERC20 _doppleX = IERC20(doppleX);
-        uint256 _balance = _doppleX.balanceOf(address(this));
+        IERC20 _XVON = IERC20(doppleX);
+        uint256 _balance = _XVON.balanceOf(address(this));
 
         require(_balance > 0, "Nothing to withdraw");
         require(_amount <= _balance, "Exceed balance");
 
-        _doppleX.transfer(msg.sender, _amount);
+        _XVON.transfer(msg.sender, _amount);
     }
 
     function deposit(uint256 _amount) external {
         require(_amount > 0, "Should not be zero");
 
-        IERC20 _dopple = IERC20(dopple);
+        IERC20 _VON = IERC20(dopple);
 
         require(
-            _dopple.balanceOf(msg.sender) >= _amount,
+            _VON.balanceOf(msg.sender) >= _amount,
             "convert: User has insufficient Dop Balance"
         );
 
-        _dopple.safeTransferFrom(msg.sender, burnTo, _amount);
+        _VON.safeTransferFrom(msg.sender, burnTo, _amount);
         
         emit Deposit(msg.sender, _amount);
     }
@@ -67,14 +67,14 @@ contract Express is Ownable {
     function withdraw(address _receiver, uint256 _amount) external onlyAdmin {
         require(_amount > 0, "Should not be zero");
 
-        IERC20 _doppleX = IERC20(doppleX);
+        IERC20 _XVON = IERC20(doppleX);
 
         require(
-            _doppleX.balanceOf(address(this)) >= _amount,
+            _XVON.balanceOf(address(this)) >= _amount,
             "convert: Contract has insufficient DoppleX amount"
         );
 
-        _doppleX.transfer(_receiver, _amount);
+        _XVON.transfer(_receiver, _amount);
 
         emit Withdraw(_receiver, _amount);
     }
