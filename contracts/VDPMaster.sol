@@ -624,7 +624,7 @@ contract VDPMaster is Ownable, Withdrawable, ReentrancyGuard {
     
     address[] public swapPath;
     
-    uint public wexPermille = 100;
+    uint public xvonPermille = 100;
     uint public treasuryPermille = 7;
     uint public feePermille = 0;
     
@@ -632,10 +632,10 @@ contract VDPMaster is Ownable, Withdrawable, ReentrancyGuard {
     
     event Stake(address indexed user, uint256 amount);
     event Redeem(address indexed user, uint256 amount);
-    event UsdtWithdrawn(uint256 amount);
-    event WexWithdrawn(uint256 amount);
+    event BUSDWithdrawn(uint256 amount);
+    event XVONWithdrawn(uint256 amount);
     event SwapPathChanged(address[] swapPath);
-    event WexPermilleChanged(uint256 wexPermille);
+    event XVONPermilleChanged(uint256 xvonPermille);
     event TreasuryPermilleChanged(uint256 treasuryPermille);
     event FeePermilleChanged(uint256 feePermille);
     event TreasuryAddressChanged(address treasury);
@@ -666,11 +666,11 @@ contract VDPMaster is Ownable, Withdrawable, ReentrancyGuard {
         emit SwapPathChanged(swapPath);
     }
     
-    function setWexPermille(uint _wexPermille) external onlyOwner {
-        require(_wexPermille <= 500, 'wexPermille too high!');
-        wexPermille = _wexPermille;
+    function setxvonPermille(uint _xvonPermille) external onlyOwner {
+        require(_xvonPermille <= 500, 'xvonPermille too high!');
+        xvonPermille = _xvonPermille;
         
-        emit WexPermilleChanged(wexPermille);
+        emit XVONPermilleChanged(xvonPermille);
     }
     
     function setTreasuryPermille(uint _treasuryPermille) external onlyOwner {
@@ -713,7 +713,7 @@ contract VDPMaster is Ownable, Withdrawable, ReentrancyGuard {
             busd.safeTransfer(treasury, feeAmount);
             amount = amount - feeAmount;
         }
-        uint256 xvonAmount = amount * wexPermille / 1000;
+        uint256 xvonAmount = amount * xvonPermille / 1000;
         xvon.safeTransferFrom(msg.sender, address(this), xvonAmount);
         // usdt.approve(address(wswapRouter), wexAmount);
         // wswapRouter.swapExactTokensForTokensSupportingFeeOnTransferTokens(
@@ -729,7 +729,7 @@ contract VDPMaster is Ownable, Withdrawable, ReentrancyGuard {
     }
     
     function redeem(uint256 amount) external nonReentrant {
-        uint256 usdtTransferAmount = amount * (1000 - wexPermille - treasuryPermille) / 1000;
+        uint256 usdtTransferAmount = amount * (1000 - xvonPermille - treasuryPermille) / 1000;
         uint256 usdtTreasuryAmount = amount * treasuryPermille / 1000;
         uint256 xvonTransferAmount = xvon.balanceOf(address(this)) * amount / vdp.totalSupply();
         vdp.burn(msg.sender, amount);
@@ -745,12 +745,12 @@ contract VDPMaster is Ownable, Withdrawable, ReentrancyGuard {
         require(strategist != address(0), 'strategist not set');
         busd.safeTransfer(strategist, amount);
         
-        emit UsdtWithdrawn(amount);
+        emit BUSDWithdrawn(amount);
     }
     
     function withdrawXVON(uint256 amount) external onlyWithdrawer {
         xvon.safeTransfer(msg.sender, amount);
         
-        emit WexWithdrawn(amount);
+        emit XVONWithdrawn(amount);
     }
 }
