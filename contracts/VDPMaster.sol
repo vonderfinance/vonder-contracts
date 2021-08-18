@@ -725,12 +725,12 @@ contract VDPMaster is Ownable, Withdrawable, ReentrancyGuard {
     }
     
     function redeem(uint256 amount) external nonReentrant {
-        uint256 usdtTransferAmount = amount * (1000 - xvonPermille - treasuryPermille) / 1000;
-        uint256 usdtTreasuryAmount = amount * treasuryPermille / 1000;
+        uint256 busdTransferAmount = amount * (1000 - xvonPermille - treasuryPermille) / 1000;
+        uint256 busdTreasuryAmount = amount * treasuryPermille / 1000;
         uint256 xvonTransferAmount = xvon.balanceOf(address(this)) * amount / vdp.totalSupply();
         vdp.burn(msg.sender, amount);
-        busd.safeTransfer(treasury, usdtTreasuryAmount);
-        busd.safeTransfer(msg.sender, usdtTransferAmount);
+        busd.safeTransfer(treasury, busdTreasuryAmount);
+        busd.safeTransfer(msg.sender, busdTransferAmount);
         // wex.safeTransfer(msg.sender, wexTransferAmount);
         xvon.safeTransferFrom(msg.sender, address(this), xvonTransferAmount);
         
