@@ -12,9 +12,10 @@ contract Express is Ownable {
     using SafeERC20 for IERC20;
     using SafeMath for uint256;
 
-    address public dopple;
-    address public doppleX;
+    address public von;
+    address public xvon;
     address public burnTo = address(0);
+    // address public burnTo = address("0x000000000000000000000000000000000000dead");
 
     address public adminAddress;
     address public receiver;
@@ -32,15 +33,15 @@ contract Express is Ownable {
         address _XVON
         // address _burnTo
     ) public {
-        dopple = _VON;
-        doppleX = _XVON;
+        von = _VON;
+        xvon = _XVON;
         // burnTo = _burnTo;
     }
 
     function adminEmergencyWithdraw(uint256 _amount) external onlyOwner {
         require(_amount > 0, "Should not be zero");
 
-        IERC20 _XVON = IERC20(doppleX);
+        IERC20 _XVON = IERC20(xvon);
         uint256 _balance = _XVON.balanceOf(address(this));
 
         require(_balance > 0, "Nothing to withdraw");
@@ -52,11 +53,11 @@ contract Express is Ownable {
     function deposit(uint256 _amount) external {
         require(_amount > 0, "Should not be zero");
 
-        IERC20 _VON = IERC20(dopple);
+        IERC20 _VON = IERC20(von);
 
         require(
             _VON.balanceOf(msg.sender) >= _amount,
-            "convert: User has insufficient Dop Balance"
+            "convert: User has insufficient VON Balance"
         );
 
         _VON.safeTransferFrom(msg.sender, burnTo, _amount);
@@ -67,11 +68,11 @@ contract Express is Ownable {
     function withdraw(address _receiver, uint256 _amount) external onlyAdmin {
         require(_amount > 0, "Should not be zero");
 
-        IERC20 _XVON = IERC20(doppleX);
+        IERC20 _XVON = IERC20(xvon);
 
         require(
             _XVON.balanceOf(address(this)) >= _amount,
-            "convert: Contract has insufficient DoppleX amount"
+            "convert: Contract has insufficient XVON amount"
         );
 
         _XVON.transfer(_receiver, _amount);
