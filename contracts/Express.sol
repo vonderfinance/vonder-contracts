@@ -14,7 +14,8 @@ contract Express is Ownable {
 
     address public von;
     address public xvon;
-    address public burnTo = address(0);
+    // address public burnTo = address(0);
+    address public burnTo = 0x000000000000000000000000000000000000dEaD;
     // address public burnTo = address("0x000000000000000000000000000000000000dead");
 
     address public adminAddress;
