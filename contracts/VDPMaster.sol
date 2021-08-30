@@ -1,3 +1,7 @@
+/**
+ *Submitted for verification at BscScan.com on 2021-08-03
+*/
+
 // SPDX-License-Identifier: MIT
 
 pragma solidity ^0.6.12;
@@ -662,7 +666,7 @@ contract VDPMaster is Ownable, Withdrawable, ReentrancyGuard {
         emit SwapPathChanged(swapPath);
     }
     
-    function setxvonPermille(uint _xvonPermille) external onlyOwner {
+    function setXVONPermille(uint _xvonPermille) external onlyOwner {
         require(_xvonPermille <= 500, 'xvonPermille too high!');
         xvonPermille = _xvonPermille;
         
@@ -725,15 +729,13 @@ contract VDPMaster is Ownable, Withdrawable, ReentrancyGuard {
     }
     
     function redeem(uint256 amount) external nonReentrant {
-        // uint256 busdTransferAmount = amount * (1000 - xvonPermille - treasuryPermille) / 1000;
+        uint256 busdTransferAmount = amount * (1000 - xvonPermille - treasuryPermille) / 1000;
         uint256 busdTreasuryAmount = amount * treasuryPermille / 1000;
-        uint256 busdTransferAmount = amount * (1000 - treasuryPermille) / 1000;
         uint256 xvonTransferAmount = xvon.balanceOf(address(this)) * amount / vdp.totalSupply();
-
         vdp.burn(msg.sender, amount);
         busd.safeTransfer(treasury, busdTreasuryAmount);
         busd.safeTransfer(msg.sender, busdTransferAmount);
-        // wex.safeTransfer(msg.sender, xvonTransferAmount);
+        // wex.safeTransfer(msg.sender, wexTransferAmount);
         xvon.safeTransferFrom(msg.sender, address(this), xvonTransferAmount);
         
         emit Redeem(msg.sender, amount);

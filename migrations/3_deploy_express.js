@@ -4,7 +4,7 @@ const XVON = artifacts.require("XVonderToken");
 module.exports = (deployer, network, addresses) => {
 		const [admin] = addresses;
     const VON = {
-      address: "0xb167658b19e5BcD3a6106E6C6B73c8c35f1D6bfe"
+      address: "0x19dade57B0BBCE7D5E859ba02846820f5c0c2b09"
     };
 
     const XVON = {

@@ -60,7 +60,7 @@ module.exports = {
             provider: () => bitkubTestnetProvider,
             network_id: '25925',
             gas: 5500000,
-            gasPrice: Web3.utils.toWei('50', 'gwei'),
+            gasPrice: Web3.utils.toWei('5', 'gwei'),
             skipDryRun: true,
         },
     },
