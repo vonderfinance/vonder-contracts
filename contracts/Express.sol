@@ -806,9 +806,14 @@ contract Express is Ownable {
     address public adminAddress;
     address public receiver;
 
+<<<<<<< HEAD
     event Burn(address, address, uint256);
     event Deposit(address, address, uint256);
     event Withdraw(address, address, uint256);
+=======
+    event Deposit(string, address, uint256);
+    event Withdraw(string, address, uint256);
+>>>>>>> 776590aad728ef26b627c44457ab771a5dee68c9
 
     modifier onlyAdmin() {
         require(msg.sender == adminAddress, "admin: wut?");
@@ -862,7 +867,11 @@ contract Express is Ownable {
         // _VON.safeTransferFrom(msg.sender, burnTo, _amount);
         _VON.safeTransferFrom(msg.sender, address(this), _amount);
         
+<<<<<<< HEAD
         emit Deposit(tx.origin,msg.sender, _amount);
+=======
+        emit Deposit(tx.origin, msg.sender, _amount);
+>>>>>>> 776590aad728ef26b627c44457ab771a5dee68c9
     }
 
     function withdraw(address _receiver, uint256 _amount) external onlyAdmin {
