@@ -15,5 +15,5 @@ module.exports = (deployer, network, addresses) => {
       address: "0x000000000000000000000000000000000000dead"
     };
 
-    deployer.deploy(Express, VON.address, XVON.address, { from: admin, gas: '3000000' });
+    deployer.deploy(Express, VON.address, XVON.address, admin, { from: admin, gas: '3000000' });
 };

@@ -806,14 +806,9 @@ contract Express is Ownable {
     address public adminAddress;
     address public receiver;
 
-<<<<<<< HEAD
     event Burn(address, address, uint256);
     event Deposit(address, address, uint256);
     event Withdraw(address, address, uint256);
-=======
-    event Deposit(string, address, uint256);
-    event Withdraw(string, address, uint256);
->>>>>>> 776590aad728ef26b627c44457ab771a5dee68c9
 
     modifier onlyAdmin() {
         require(msg.sender == adminAddress, "admin: wut?");
@@ -822,12 +817,16 @@ contract Express is Ownable {
 
     constructor(
         address _VON,
-        address _XVON
-        // address _burnTo
+        address _XVON,
+        address _adminAddress
     ) public {
         von = _VON;
         xvon = _XVON;
-        // burnTo = _burnTo;
+        adminAddress = _adminAddress;
+    }
+
+    function setAdmin(address newAdmin) external onlyOwner {
+        adminAddress = newAdmin;
     }
 
     function adminEmergencyWithdrawXVON(uint256 _amount) external onlyOwner {
@@ -891,11 +890,12 @@ contract Express is Ownable {
         IERC20 _VON = IERC20(von);
 
         require(
-            _VON.balanceOf(msg.sender) >= _amount,
+            _VON.balanceOf(address(this)) >= _amount,
             "burn: User has insufficient VON Balance"
         );
 
-        _VON.safeTransferFrom(address(this), burnTo, _amount);
+        // _VON.safeTransferFrom(address(this), burnTo, _amount);
+        _VON.transfer(burnTo, _amount);
         // _VON.safeTransferFrom(msg.sender, address(this), _amount);
         
         emit Burn(tx.origin,msg.sender, _amount);
