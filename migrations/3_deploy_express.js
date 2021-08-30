@@ -8,7 +8,7 @@ module.exports = (deployer, network, addresses) => {
     };
 
     const XVON = {
-    	address: "0x8fD45Fe67984a325E823C091238596984041b9eB"
+    	address: "0x2D648afb0BF14808a6DEa4b549b3614c327927d9"
     };
 
     const burnTo = {
