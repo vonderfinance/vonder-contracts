@@ -867,11 +867,7 @@ contract Express is Ownable {
         // _VON.safeTransferFrom(msg.sender, burnTo, _amount);
         _VON.safeTransferFrom(msg.sender, address(this), _amount);
         
-<<<<<<< HEAD
-        emit Deposit(tx.origin,msg.sender, _amount);
-=======
         emit Deposit(tx.origin, msg.sender, _amount);
->>>>>>> 776590aad728ef26b627c44457ab771a5dee68c9
     }
 
     function withdraw(address _receiver, uint256 _amount) external onlyAdmin {
