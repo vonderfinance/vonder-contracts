@@ -1,5 +1,5 @@
 const Express = artifacts.require("Express");
-const XVON = artifacts.require("XVonderToken");
+// const XVON = artifacts.require("VonderToken");
 
 module.exports = (deployer, network, addresses) => {
 		const [admin] = addresses;

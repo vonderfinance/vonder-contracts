@@ -1,5 +1,5 @@
 const VDPMaster = artifacts.require("VDPMaster");
-// const XVON = artifacts.require("XVonderToken");
+// const XVON = artifacts.require("VonderToken");
 const VDP = artifacts.require("VDP");
 const Web3 = require("web3");
 
