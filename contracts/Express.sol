@@ -913,5 +913,23 @@ contract Express is Ownable {
         xvon = _xvon;
     }
 
+    function getExchangeRate() public view returns (uint256) {
+         IERC20 _VON = IERC20(von);
+         IERC20 _XVON = IERC20(xvon);
+        return (_VON.balanceOf(address(xvon)) * 1e18) / _XVON.totalSupply();
+    }
+
+    function toVON(uint256 xVonAmount) public view returns (uint256 vonAmount) {
+         IERC20 _VON = IERC20(von);
+         IERC20 _XVON = IERC20(xvon);
+        vonAmount = (xVonAmount * _VON.balanceOf(address(xvon))) / _XVON.totalSupply();
+    }
+
+    function toXVON(uint256 vonAmount) public view returns (uint256 xVonAmount) {
+         IERC20 _VON = IERC20(von);
+         IERC20 _XVON = IERC20(xvon);
+        xVonAmount = (vonAmount * _XVON.totalSupply()) / _VON.balanceOf(address(xvon));
+    }
+
 
 }

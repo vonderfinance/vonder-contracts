@@ -49,6 +49,13 @@ module.exports = {
             gasPrice: Web3.utils.toWei('10', 'gwei'),
             skipDryRun: true,
         },
+        bscMainnet: {
+            provider: () => binanceMainnetProvider,
+            network_id: '56',
+            gas: 5500000,
+            gasPrice: Web3.utils.toWei('10', 'gwei'),
+            skipDryRun: true,
+        },
         bkcMainnet: {
             provider: () => bitkubMainnetProvider,
             network_id: '96',
