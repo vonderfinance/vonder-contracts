@@ -515,8 +515,8 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
     //     _afterTokenTransfer(sender, recipient, amount);
     // }
     function _transfer (address sender, address recipient, uint256 amount) internal {
-        require(sender != address(0), 'BEP20: transfer from the zero address');
-        require(recipient != address(0), 'BEP20: transfer to the zero address');
+        require(sender != address(0), 'ERC20: transfer from the zero address');
+        require(recipient != address(0), 'ERC20: transfer to the zero address');
 
         _balances[sender] = _balances[sender].sub(amount);
         _balances[recipient] = _balances[recipient].add(amount);
@@ -573,7 +573,7 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
     //     _afterTokenTransfer(account, address(0), amount);
     // }
     function _burn(address account, uint256 amount) internal {
-        require(account != address(0), 'BEP20: burn from the zero address');
+        require(account != address(0), 'ERC20: burn from the zero address');
 
         _balances[account] = _balances[account].sub(amount);
         _totalSupply = _totalSupply.sub(amount);

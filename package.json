@@ -18,6 +18,7 @@
     "truffle-flattener": "^1.5.0"
   },
   "devDependencies": {
+    "@boringcrypto/boring-solidity": "boringcrypto/BoringSolidity#e06e943",
     "@truffle/hdwallet-provider": "^1.4.3",
     "chai": "^4.2.0",
     "ethereum-waffle": "^3.0.0",
