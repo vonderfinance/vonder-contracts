@@ -694,7 +694,7 @@ contract Pausable is Ownable {
   }
 }
 
-contract VDP is ERC20("VONDER Dollar-Peg", "VDP"), Ownable, Mintable, Pausable {
+contract VDP is ERC20("VONDER Dollar-Peg", "VUSD"), Ownable, Mintable, Pausable {
     function mint(address account, uint256 amount) external onlyMinter whenNotPaused {
         _mint(account, amount);
     }

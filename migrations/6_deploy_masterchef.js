@@ -10,13 +10,14 @@ module.exports = async function(deployer, network, addresses) {
 
     const VDP = {
         // address: "0xB473Bf366219855E55aa6854f111b374496F3404" // recently on bkc testnet
-        address: "0x64E6Fd88fC69b19A8227d80aE87bcecF756BBA81" // current VDP address on BSC testnet
+        // address: "0x64E6Fd88fC69b19A8227d80aE87bcecF756BBA81" // current VDP address on BSC testnet
+        address: "0xA80D76Abb3087F730Ce14aAf54b211611bAc0bE8" // current VDP address on BSC mainnet
     }
 
     // const startBlock = 718880; // on bkc mainnet
-    const startBlock = 12616510; // on bsc testnet
-    const bonusEndBlock = 13016510;
-    const vdpPerBlock = Web3.utils.toWei('0.001', 'ether');
+    const startBlock = 11280939; // on bsc testnet
+    const bonusEndBlock = 12280939;
+    const vdpPerBlock = Web3.utils.toWei('0.0001', 'ether');
 
     //   VDP _sushi,
     // address _devaddr,
