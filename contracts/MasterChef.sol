@@ -446,6 +446,18 @@ contract MasterChef is Ownable {
         uint256 indexed pid,
         uint256 amount
     );
+    event UpdateEmissionRate(uint256 newEmissionRate);
+    event Add(
+        uint256 _allocPoint,
+        IERC20 _lpToken,
+        bool _withUpdate
+    );
+    event Set(
+        uint256 _pid,
+        uint256 _allocPoint,
+        bool _withUpdate
+    );
+    
 
     constructor(
         VDP _sushi,
@@ -486,6 +498,7 @@ contract MasterChef is Ownable {
                 accSushiPerShare: 0
             })
         );
+        emit Add(_allocPoint,_lpToken,_withUpdate);
     }
 
     // Update the given pool's SUSHI allocation point. Can only be called by the owner.
@@ -501,6 +514,7 @@ contract MasterChef is Ownable {
             _allocPoint
         );
         poolInfo[_pid].allocPoint = _allocPoint;
+        emit Set(_pid,_allocPoint,_withUpdate);
     }
 
     // Set the migrator contract. Can only be called by the owner.
@@ -536,6 +550,10 @@ contract MasterChef is Ownable {
                     _to.sub(bonusEndBlock)
                 );
         }
+    }
+
+    function setBonusEndBlock(uint256 _bonusEndBlock) external onlyOwner {
+        bonusEndBlock = _bonusEndBlock;
     }
 
     // View function to see pending SUSHIs on frontend.
@@ -657,5 +675,17 @@ contract MasterChef is Ownable {
     function dev(address _devaddr) public {
         require(msg.sender == devaddr, "dev: wut?");
         devaddr = _devaddr;
+    }
+
+    // function setFeeAddress(address _feeAddress) public {
+    //     require(msg.sender == feeAddress, "setFeeAddress: FORBIDDEN");
+    //     feeAddress = _feeAddress;
+    // }
+
+    //Pancake has to add hidden dummy pools inorder to alter the emission, here we make it simple and transparent to all.
+    function updateEmissionRate(uint256 _sushiPerBlock) external onlyOwner {
+        massUpdatePools();
+        sushiPerBlock = _sushiPerBlock;
+        emit UpdateEmissionRate(sushiPerBlock);
     }
 }
