@@ -694,12 +694,28 @@ contract Pausable is Ownable {
   }
 }
 
-contract VDP is ERC20("VONDER Dollar-Peg", "VUSD"), Ownable, Mintable, Pausable {
-    function mint(address account, uint256 amount) external onlyMinter whenNotPaused {
+contract XVUSD is ERC20("xVONDER Dollar-Peg", "xVUSD"), Ownable, Mintable, Pausable {
+
+    mapping(address => bool) public isMinter;
+    
+    modifier onlyMintership() {
+        require(isMinter[_msgSender()], "Mintable: caller is not in the mintership");
+        _;
+    }
+
+    function mint(address account, uint256 amount) external onlyMintership whenNotPaused {
         _mint(account, amount);
     }
     
-    function burn(address account, uint256 amount) external onlyMinter whenNotPaused {
+    function burn(address account, uint256 amount) external onlyMintership whenNotPaused {
         _burn(account, amount);
+    }
+
+    function setMinter(address _minter) external onlyOwner {
+      isMinter[_minter] = true;
+    }
+
+    function unsetMinter(address _minter) external onlyOwner {
+      isMinter[_minter] = false;
     }
 }

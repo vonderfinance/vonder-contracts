@@ -497,7 +497,7 @@ contract ERC20 is Context, IERC20, Ownable {
      *
      * - `msg.sender` must be the token owner
      */
-    function mint(uint256 amount) public onlyOwner returns (bool) {
+    function mint(uint256 amount) public onlyOwner virtual returns (bool) {
         _mint(_msgSender(), amount);
         return true;
     }
@@ -693,8 +693,16 @@ contract VonderToken is ERC20('Extended VONDER', 'xVON') {
     }
 
     // @notice Creates `_amount` token to `_to`. Must only be called by the owner (MasterChef).
-    function mint(address _to, uint256 _amount) public onlyOwner {
+    function mintTo(address _to, uint256 _amount) public onlyOwner {
         require(totalSupply().add(_amount) <= cap(), "cap exceeded");
         _mint(_to, _amount);
     }
+
+    // add mint protection
+    function mint(uint256 _amount) public override onlyOwner returns (bool) {
+        require(totalSupply().add(_amount) <= cap(), "cap exceeded");
+        _mint(_msgSender(), _amount);
+        return true;
+    }
+
 }
