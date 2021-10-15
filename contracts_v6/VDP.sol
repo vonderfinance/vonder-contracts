@@ -694,7 +694,7 @@ contract Pausable is Ownable {
   }
 }
 
-contract VDP is ERC20("VONDER Dollar-Peg", "VUSD"), Ownable, Mintable, Pausable {
+contract VDP is ERC20("xVONDER Dollar-Peg", "xVUSD"), Ownable, Mintable, Pausable {
 
     mapping(address => bool) public isMinter;
     

@@ -11,7 +11,7 @@ module.exports = async function(deployer, network, addresses) {
     const VDP = {
         // address: "0xB473Bf366219855E55aa6854f111b374496F3404" // recently on bkc testnet
         // address: "0x64E6Fd88fC69b19A8227d80aE87bcecF756BBA81" // current VDP address on BSC testnet
-        address: "0xA80D76Abb3087F730Ce14aAf54b211611bAc0bE8" // current VDP address on BSC mainnet
+        address: "0x75fF8225db6dE141dD72EFC06f1E0b09d0baaB7B" // current xVUSD address on BSC mainnet
     }
 
     // const startBlock = 718880; // on bkc mainnet
