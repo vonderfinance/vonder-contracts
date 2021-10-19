@@ -741,15 +741,6 @@ contract VDPMasterV2 is Ownable, Withdrawable, ReentrancyGuard, Pausable {
     event MaxRedeemAmountChanged(uint256 maxRedeemAmount);
     event MaxStakePerBlockChanged(uint256 maxStakePerBlock);
     
-    // Testnet address 
-    // ROY : 
-    // BUSD : 
-   
-    // ROYX : 
-    // treasury : 
-    
-    // PancakeRouter : 
-    
     constructor(IVUSD _vusd, IERC20 _busd, IERC20 _xvon, address _treasury, ISushiSwapRouter _sushiSwapRouter, uint256 _maxStakeAmount, uint256 _maxRedeemAmount, uint256 _maxStakePerBlock) {
         require(
             address(_vusd) != address(0) &&
@@ -793,9 +784,9 @@ contract VDPMasterV2 is Ownable, Withdrawable, ReentrancyGuard, Pausable {
         emit SwapPathChanged(swapPath);
     }
     
-    function setROYXPermille(uint _royxPermille) external onlyOwner {
-        require(_royxPermille <= 10000, 'royxPermille too high!');
-        xvonPermille = _royxPermille;
+    function setXVONPermille(uint _xvonPermille) external onlyOwner {
+        require(_xvonPermille <= 10000, 'xvonPermille too high!');
+        xvonPermille = _xvonPermille;
         
         emit XVONPermilleChanged(xvonPermille);
     }
@@ -985,7 +976,7 @@ contract VDPMasterV2 is Ownable, Withdrawable, ReentrancyGuard, Pausable {
         emit BUSDWithdrawn(amount);
     }
     
-    function withdrawROYX(uint256 amount) external onlyWithdrawer {
+    function withdrawXVON(uint256 amount) external onlyWithdrawer {
         xvon.safeTransfer(msg.sender, amount);
         emit XVONWithdrawn(amount);
     }
