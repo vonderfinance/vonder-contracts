@@ -860,7 +860,7 @@ contract VDPMasterV2 is Ownable, Withdrawable, ReentrancyGuard, Pausable {
             
             uint[] memory amountsOutMin = wswapRouter.getAmountsOut(
                 xvonAmount,
-                swapPath // [address(busd), address(royx)];
+                swapPath // [address(busd), address(xvon)];
             );
             amountOutMin = amountsOutMin[1];
             
@@ -926,8 +926,8 @@ contract VDPMasterV2 is Ownable, Withdrawable, ReentrancyGuard, Pausable {
             uint256 amountOutMin = 0;
             
             uint[] memory amountsOutMin = wswapRouter.getAmountsOut(
-                xvonTransferAmount, // [address(royx), address(busd)];
-                swapPathReverse // [address(royx), address(busd)];
+                xvonTransferAmount, // [address(xvon), address(busd)];
+                swapPathReverse // [address(xvon), address(busd)];
             );
             amountOutMin = amountsOutMin[1];
             
