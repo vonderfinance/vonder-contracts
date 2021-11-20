@@ -755,15 +755,6 @@ contract VDPMasterV2 is Ownable, Withdrawable, ReentrancyGuard, Pausable {
     event MaxStakeAmountChanged(uint256 maxStakeAmount);
     event MaxRedeemAmountChanged(uint256 maxRedeemAmount);
     event MaxStakePerBlockChanged(uint256 maxStakePerBlock);
-    
-    // Testnet address 
-    // ROY : 
-    // BUSD : 
-   
-    // ROYX : 
-    // treasury : 
-    
-    // PancakeRouter :
 
     modifier onlyUser() {
         require(
