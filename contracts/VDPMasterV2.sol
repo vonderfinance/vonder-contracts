@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity 0.8.6;
+pragma solidity =0.8.6;
 
 /*
  * @dev Provides information about the current execution context, including the
@@ -36,8 +36,10 @@ abstract contract Context {
  */
 abstract contract Ownable is Context {
     address private _owner;
+    address private candidateOwner;
 
     event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
+    event NewCandidateOwner(address _candidateOwner);
 
     /**
      * @dev Initializes the contract setting the deployer as the initial owner.
@@ -68,23 +70,36 @@ abstract contract Ownable is Context {
      * NOTE: Renouncing ownership will leave the contract without an owner,
      * thereby removing any functionality that is only available to the owner.
      */
-    function renounceOwnership() public virtual onlyOwner {
-        _setOwner(address(0));
-    }
+    // function renounceOwnership() public virtual onlyOwner {
+    //     _setOwner(address(0));
+    // }
 
     /**
      * @dev Transfers ownership of the contract to a new account (`newOwner`).
      * Can only be called by the current owner.
      */
-    function transferOwnership(address newOwner) public virtual onlyOwner {
-        require(newOwner != address(0), "Ownable: new owner is the zero address");
-        _setOwner(newOwner);
-    }
+    // function transferOwnership(address newOwner) public virtual onlyOwner {
+    //     require(newOwner != address(0), "Ownable: new owner is the zero address");
+    //     _setOwner(newOwner);
+    // }
 
     function _setOwner(address newOwner) private {
         address oldOwner = _owner;
         _owner = newOwner;
         emit OwnershipTransferred(oldOwner, newOwner);
+    }
+    
+    function transferOwnership(address _candidateOwner) external onlyOwner {
+        require(_candidateOwner != address(0), "Ownable: candidate owner is the zero address");
+        candidateOwner = _candidateOwner;
+        emit NewCandidateOwner(_candidateOwner);
+    }
+    function claimOwnership() external {
+        require(candidateOwner == msg.sender, "Ownable: transaction submitter is not the candidate owner");
+        address oldOwner = _owner;
+        _owner = candidateOwner;
+        candidateOwner = address(0);
+        emit OwnershipTransferred(oldOwner, _owner);
     }
 }
 
@@ -748,7 +763,15 @@ contract VDPMasterV2 is Ownable, Withdrawable, ReentrancyGuard, Pausable {
     // ROYX : 
     // treasury : 
     
-    // PancakeRouter : 
+    // PancakeRouter :
+
+    modifier onlyUser() {
+        require(
+            msg.sender == tx.origin,
+            "Only user can invoke this transaction"
+        );
+        _;
+    } 
     
     constructor(IVUSD _vusd, IERC20 _busd, IERC20 _xvon, address _treasury, ISushiSwapRouter _sushiSwapRouter, uint256 _maxStakeAmount, uint256 _maxRedeemAmount, uint256 _maxStakePerBlock) {
         require(
@@ -789,13 +812,18 @@ contract VDPMasterV2 is Ownable, Withdrawable, ReentrancyGuard, Pausable {
     function setSwapPath(address[] calldata _swapPath) external onlyOwner {
         require(_swapPath.length > 1 && _swapPath[0] == address(busd) && _swapPath[_swapPath.length - 1] == address(xvon), "invalid swap path");
         swapPath = _swapPath;
+
+        delete swapPathReverse;
+        for (uint256 i = _swapPath.length - 1; i >= 0; i--) {
+            swapPathReverse.push(_swapPath[i]);
+        }
         
         emit SwapPathChanged(swapPath);
     }
     
-    function setROYXPermille(uint _royxPermille) external onlyOwner {
-        require(_royxPermille <= 10000, 'royxPermille too high!');
-        xvonPermille = _royxPermille;
+    function setXVONPermille(uint _xvonPermille) external onlyOwner {
+        require(_xvonPermille <= 10000, 'xvonPermille too high!');
+        xvonPermille = _xvonPermille;
         
         emit XVONPermilleChanged(xvonPermille);
     }
@@ -844,7 +872,7 @@ contract VDPMasterV2 is Ownable, Withdrawable, ReentrancyGuard, Pausable {
         emit MaxStakePerBlockChanged(maxStakePerBlock);
     }
     
-    function stake(uint256 amount) external nonReentrant whenNotPaused {
+    function stake(uint256 amount) external nonReentrant whenNotPaused onlyUser {
         require(amount > 0, 'amount cant be zero');
         require(vusdClaimAmount[msg.sender] == 0, 'you have to claim first');
         require(amount <= maxStakeAmount, 'amount too high');
@@ -865,13 +893,13 @@ contract VDPMasterV2 is Ownable, Withdrawable, ReentrancyGuard, Pausable {
         
         if(xvonPermille > 0) {
             uint256 amountOutMin = 0;
-            uint256 xvonAmount = amount * xvonPermille / 1000;
+            uint256 xvonAmount = amount * xvonPermille / 10000;
             
             uint[] memory amountsOutMin = wswapRouter.getAmountsOut(
                 xvonAmount,
-                swapPath // [address(busd), address(royx)];
+                swapPath // [address(busd), address(xvon)];
             );
-            amountOutMin = amountsOutMin[1];
+            amountOutMin = amountsOutMin[amountsOutMin.length - 1];
             
             busd.approve(address(wswapRouter), xvonAmount);
             wswapRouter.swapExactTokensForTokensSupportingFeeOnTransferTokens(
@@ -891,7 +919,7 @@ contract VDPMasterV2 is Ownable, Withdrawable, ReentrancyGuard, Pausable {
         emit Stake(msg.sender, amount);
     }
     
-    function claimVUSD() internal whenNotPaused {
+    function claimVUSD() internal whenNotPaused onlyUser {
         require(vusdClaimAmount[msg.sender] > 0, 'there is nothing to claim');
         // require(wusdClaimBlock[msg.sender] < block.number, 'you cant claim yet');
         
@@ -935,10 +963,10 @@ contract VDPMasterV2 is Ownable, Withdrawable, ReentrancyGuard, Pausable {
             uint256 amountOutMin = 0;
             
             uint[] memory amountsOutMin = wswapRouter.getAmountsOut(
-                xvonTransferAmount, // [address(royx), address(busd)];
-                swapPathReverse // [address(royx), address(busd)];
+                xvonTransferAmount, // [address(xvon), address(busd)];
+                swapPathReverse // [address(xvon), address(busd)];
             );
-            amountOutMin = amountsOutMin[1];
+            amountOutMin = amountsOutMin[amountsOutMin.length - 1];
             
             xvon.approve(address(wswapRouter), xvonTransferAmount);
             wswapRouter.swapExactTokensForTokensSupportingFeeOnTransferTokens(
@@ -985,7 +1013,7 @@ contract VDPMasterV2 is Ownable, Withdrawable, ReentrancyGuard, Pausable {
         emit BUSDWithdrawn(amount);
     }
     
-    function withdrawROYX(uint256 amount) external onlyWithdrawer {
+    function withdrawXVON(uint256 amount) external onlyWithdrawer {
         xvon.safeTransfer(msg.sender, amount);
         emit XVONWithdrawn(amount);
     }

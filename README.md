@@ -1,14 +1,9 @@
-XVON.sol
-
-Testnet
-BKC:
-BSC: https://testnet.bscscan.com/address/0x8fD45Fe67984a325E823C091238596984041b9eB#contracts
-
-Express.sol
-
-Testnet
-BKC:
-BSC: https://testnet.bscscan.com/address/0x66578214945D012F10BB7052DD056A8a8DC08581#contracts
-
-Mainnet
-BKC: https://bkcscan.com/address/0x22515Baba4aB09cC090D8e4e1A7ac3a9CF8f99C5
+## VONDER on BSC
+- Express (BKC)	0x48AC444f395BC00907Efff79691B08d1e2e1296a			
+- Express (BSC)	0x1E7d8a142D0ddDEce9CbC8D6Fc1C2C0385532429			
+- VUSD	0xA80D76Abb3087F730Ce14aAf54b211611bAc0bE8			
+- xVUSD	0x75fF8225db6dE141dD72EFC06f1E0b09d0baaB7B			
+- xVON	0xD42220De5F5260cCC4C80Fe3B08DAE0968688d13			
+- MasterChef 0x0Fd5dc4F251e78E4AcBf92b1304Eb2e2f5482efB					
+- VDPMaster	0x408877FaE8a2720cDf0BcaBbA4b92c8edCd44d29	
+- VDPMasterV2	_			

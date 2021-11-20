@@ -4,7 +4,7 @@
 
 // SPDX-License-Identifier: MIT
 
-pragma solidity ^0.6.12;
+pragma solidity =0.6.12;
 
 /*
  * @dev Provides information about the current execution context, including the
@@ -629,6 +629,13 @@ contract VDPMaster is Ownable, Withdrawable, ReentrancyGuard {
     uint public feePermille = 0;
     
     uint256 public maxStakeAmount;
+
+    address private TIMELOCK;
+
+    modifier onlyTimelock() {
+        require(msg.sender == TIMELOCK, "VDP:: NOT_TIMELOCK");
+        _;
+    }
     
     event Stake(address indexed user, uint256 amount);
     event Redeem(address indexed user, uint256 amount);
@@ -642,7 +649,7 @@ contract VDPMaster is Ownable, Withdrawable, ReentrancyGuard {
     event StrategistAddressChanged(address strategist);
     event MaxStakeAmountChanged(uint256 maxStakeAmount);
     
-    constructor(IVDP _vdp, IERC20 _busd, IERC20 _xvon, address _treasury, uint256 _maxStakeAmount) public {
+    constructor(IVDP _vdp, IERC20 _busd, IERC20 _xvon, address _treasury, uint256 _maxStakeAmount, address _timelock) public {
         require(
             address(_vdp) != address(0) &&
             address(_busd) != address(0) &&
@@ -658,6 +665,8 @@ contract VDPMaster is Ownable, Withdrawable, ReentrancyGuard {
         treasury = _treasury;
         swapPath = [address(busd), address(xvon)];
         maxStakeAmount = _maxStakeAmount;
+
+        TIMELOCK = _timelock;
     }
     
     function setSwapPath(address[] calldata _swapPath) external onlyOwner {
@@ -666,21 +675,21 @@ contract VDPMaster is Ownable, Withdrawable, ReentrancyGuard {
         emit SwapPathChanged(swapPath);
     }
     
-    function setXVONPermille(uint _xvonPermille) external onlyOwner {
+    function setXVONPermille(uint _xvonPermille) external onlyTimelock {
         require(_xvonPermille <= 500, 'xvonPermille too high!');
         xvonPermille = _xvonPermille;
         
         emit XVONPermilleChanged(xvonPermille);
     }
     
-    function setTreasuryPermille(uint _treasuryPermille) external onlyOwner {
+    function setTreasuryPermille(uint _treasuryPermille) external onlyTimelock {
         require(_treasuryPermille <= 50, 'treasuryPermille too high!');
         treasuryPermille = _treasuryPermille;
         
         emit TreasuryPermilleChanged(treasuryPermille);
     }
     
-    function setFeePermille(uint _feePermille) external onlyOwner {
+    function setFeePermille(uint _feePermille) external onlyTimelock {
         require(_feePermille <= 20, 'feePermille too high!');
         feePermille = _feePermille;
         

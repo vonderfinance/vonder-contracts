@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity ^0.6.12;
+pragma solidity =0.6.12;
 
 /**
  * @dev Interface of the ERC20 standard as defined in the EIP.
@@ -178,9 +178,9 @@ abstract contract Ownable is Context {
      * NOTE: Renouncing ownership will leave the contract without an owner,
      * thereby removing any functionality that is only available to the owner.
      */
-    function renounceOwnership() public virtual onlyOwner {
-        _setOwner(address(0));
-    }
+    // function renounceOwnership() public virtual onlyOwner {
+    //     _setOwner(address(0));
+    // }
 
     /**
      * @dev Transfers ownership of the contract to a new account (`newOwner`).
@@ -218,6 +218,12 @@ abstract contract Mintable is Context, Ownable {
      * but cannot mint anymore as soon as the 'minter' gets changes (to the chef contract)
      */
     address private _minter;
+    address private TIMELOCK;
+
+    modifier onlyTimelock() {
+        require(msg.sender == TIMELOCK, "VDP:: NOT_TIMELOCK");
+        _;
+    }
 
     event MintershipTransferred(address indexed previousMinter, address indexed newMinter);
 
@@ -225,6 +231,7 @@ abstract contract Mintable is Context, Ownable {
      * @dev Initializes the contract setting the deployer as the initial minter.
      */
     constructor () public {
+        TIMELOCK = 0x0000000000000000000000000000000000000000; // timelock address
         address msgSender = _msgSender();
         _minter = msgSender;
         emit MintershipTransferred(address(0), msgSender);
@@ -249,7 +256,7 @@ abstract contract Mintable is Context, Ownable {
      * @dev Transfers mintership of the contract to a new account (`newMinter`).
      * Can only be called by the current owner.
      */
-    function transferMintership(address newMinter) public virtual onlyOwner {
+    function transferMintership(address newMinter) public virtual onlyTimelock {
         require(newMinter != address(0), "Mintable: new minter is the zero address");
         emit MintershipTransferred(_minter, newMinter);
         _minter = newMinter;
@@ -530,8 +537,8 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
 
         _beforeTokenTransfer(address(0), account, amount);
 
-        _totalSupply += amount;
-        _balances[account] += amount;
+        _totalSupply = _totalSupply.add(amount);
+        _balances[account] = _balances[account].add(amount);
         emit Transfer(address(0), account, amount);
 
         _afterTokenTransfer(address(0), account, amount);
@@ -641,13 +648,13 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
 
 library SafeMath { 
     function sub(uint256 a, uint256 b) internal pure returns (uint256) {
-      assert(b <= a);
+      require(b <= a, "SafeMath: subtraction underflow");
       return a - b;
     }
     
     function add(uint256 a, uint256 b) internal pure returns (uint256) {
       uint256 c = a + b;
-      assert(c >= a);
+      require(c >= a, "SafeMath: addition overflow");
       return c;
     }
     function mul(uint256 a, uint256 b) internal pure returns (uint256) {
@@ -695,11 +702,29 @@ contract Pausable is Ownable {
 }
 
 contract VDP is ERC20("VONDER Dollar-Peg", "VUSD"), Ownable, Mintable, Pausable {
-    function mint(address account, uint256 amount) external onlyMinter whenNotPaused {
+
+    mapping(address => bool) public isMinter;
+    
+    modifier onlyMintership() {
+        require(isMinter[_msgSender()], "onlyAdmin: caller is not in the admin");
+        _;
+    }
+
+    function mint(address account, uint256 amount) external onlyMintership whenNotPaused {
         _mint(account, amount);
     }
     
-    function burn(address account, uint256 amount) external onlyMinter whenNotPaused {
+    function burn(address account, uint256 amount) external onlyMintership whenNotPaused {
         _burn(account, amount);
     }
+
+    function setMinter(address _minter) external onlyOwner {
+      isMinter[_minter] = true;
+    }
+
+    function unsetMinter(address _minter) external onlyOwner {
+      isMinter[_minter] = false;
+    }
+
+
 }
