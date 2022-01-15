@@ -9,7 +9,9 @@
   "scripts": {
     "flatten": "truffle-flattener contracts/Express.sol > flattened/Express.sol",
     "flatten-xvon": "truffle-flattener contracts/XVON.sol > flattened/XVON.sol",
-    "flatten-vusd": "truffle-flattener contracts/VUSDv2.sol > flattened/VUSDv2.sol"
+    "flatten-vusd": "truffle-flattener contracts/VUSDv2.sol > flattened/VUSDv2.sol",
+    "flatten-masterchef": "truffle-flattener contracts/MasterChef.sol > flattened/MasterChef.sol",
+    "flatten-vusdmaster": "truffle-flattener contracts_v8/VUSDMasterV2.sol > flattened/VUSDMasterV2.sol"
   },
   "author": "",
   "license": "ISC",

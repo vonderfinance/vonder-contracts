@@ -5,7 +5,7 @@ module.exports = (deployer, network, addresses) => {
     const [admin] = addresses;
 
     const VUSD = {
-        address: "" // BSC MAINNET
+        address: "0x5ac7048d2996cc118c8ec6cd79045f7a76176df2" // BSC MAINNET
     }
 
     const BUSD = {
@@ -21,13 +21,12 @@ module.exports = (deployer, network, addresses) => {
     }
 
     const SUSHIROUTER = {
-    		address: "0x1b02da8cb0d097eb8d57a175b88c7d8b47997506"
+    	address: "0x1b02da8cb0d097eb8d57a175b88c7d8b47997506"
     }
 
     const maxStakeAmount = Web3.utils.toWei('3000', 'ether');
     const maxRedeemAmount = Web3.utils.toWei('1000', 'ether');
     const maxStakePerBlock = Web3.utils.toWei('1000', 'ether');
 
-    // constructor(IVUSD _vusd, IERC20 _busd, IERC20 _xvon, address _treasury, ISushiSwapRouter _sushiSwapRouter, uint256 _maxStakeAmount, uint256 _maxRedeemAmount, uint256 _maxStakePerBlock)
-    deployer.deploy(VUSDMasterV2, VUSD.address, BUSD.address, XVON.address, TREASURY.address,SUSHIROUTER.address, maxStakeAmount,maxRedeemAmount,maxStakePerBlock, { from: admin, gas: '3000000' });
+    deployer.deploy(VUSDMasterV2, VUSDv2.address, BUSD.address, XVON.address, TREASURY.address,SUSHIROUTER.address, maxStakeAmount,maxRedeemAmount,maxStakePerBlock, { from: admin, gas: '3000000' });
 };

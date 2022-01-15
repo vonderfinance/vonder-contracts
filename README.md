@@ -8,5 +8,6 @@
 - VDPMaster	0x408877FaE8a2720cDf0BcaBbA4b92c8edCd44d29	
 
 ## VONDER V2 on BSC 
-- VUSD https://bscscan.com/address/0x5ac7048d2996cc118c8ec6cd79045f7a76176df2#code
-- VUSDMasterV2	
+- VUSDv2 https://bscscan.com/address/0x5ac7048d2996cc118c8ec6cd79045f7a76176df2#code
+- VUSDMasterV2 https://bscscan.com/address/0x39eca8fe25ad5c5b9eca3e75874d09dba384b2bb#code
+- MasterChef https://bscscan.com/address/0x9aa7b6b733227e5c08fb528a5c928b0254c667d8#code
