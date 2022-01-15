@@ -11,7 +11,7 @@ const binanceProvider = new HDWalletProvider({
 
 const binanceMainnetProvider = new HDWalletProvider({
     privateKeys: privateKeys,
-    providerOrUrl: `https://bsc-dataseed2.defibit.io`
+    providerOrUrl: `https://bsc-dataseed1.ninicoin.io`
 });
 
 const bitkubMainnetProvider = new HDWalletProvider({
@@ -55,6 +55,8 @@ module.exports = {
             gas: 5500000,
             gasPrice: Web3.utils.toWei('10', 'gwei'),
             skipDryRun: true,
+            networkCheckTimeoutnetworkCheckTimeout: 10000,
+timeoutBlocks: 200
         },
         bkcMainnet: {
             provider: () => bitkubMainnetProvider,

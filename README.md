@@ -6,4 +6,7 @@
 - xVON	0xD42220De5F5260cCC4C80Fe3B08DAE0968688d13			
 - MasterChef 0x0Fd5dc4F251e78E4AcBf92b1304Eb2e2f5482efB					
 - VDPMaster	0x408877FaE8a2720cDf0BcaBbA4b92c8edCd44d29	
-- VDPMasterV2	_			
+
+## VONDER V2 on BSC 
+- VUSD https://bscscan.com/address/0x5ac7048d2996cc118c8ec6cd79045f7a76176df2#code
+- VUSDMasterV2	

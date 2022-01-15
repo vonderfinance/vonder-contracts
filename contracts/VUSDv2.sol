@@ -701,7 +701,7 @@ contract Pausable is Ownable {
   }
 }
 
-contract VUSD is ERC20("VONDER Universal Stable Dollar", "VUSDv2"), Ownable, Mintable, Pausable {
+contract VUSDv2 is ERC20("VONDER Universal Stable Dollar", "VUSDv2"), Ownable, Mintable, Pausable {
 
     mapping(address => bool) public isMinter;
     

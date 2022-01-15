@@ -2,7 +2,7 @@
 
 pragma solidity =0.6.12;
 
-import "./VUSD.sol";
+import "./VUSDv2.sol";
 
 library Address {
     /**
@@ -409,7 +409,7 @@ contract MasterChef is Ownable {
     }
 
     // The VON TOKEN!
-    VUSD public von;
+    VUSDv2 public von;
     // Dev address.
     address public devaddr;
     // VON tokens created per block.
@@ -433,7 +433,7 @@ contract MasterChef is Ownable {
     event EmergencyWithdraw(address indexed user, uint256 indexed pid, uint256 amount);
 
     constructor(
-        VUSD _von,
+        VUSDv2 _von,
         address _devaddr,
         address _feeAddress,
         uint256 _vonPerBlock,

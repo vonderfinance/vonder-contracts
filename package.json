@@ -8,13 +8,14 @@
   },
   "scripts": {
     "flatten": "truffle-flattener contracts/Express.sol > flattened/Express.sol",
-    "flatten-xvon": "truffle-flattener contracts/XVON.sol > flattened/XVON.sol"
+    "flatten-xvon": "truffle-flattener contracts/XVON.sol > flattened/XVON.sol",
+    "flatten-vusd": "truffle-flattener contracts/VUSDv2.sol > flattened/VUSDv2.sol"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@openzeppelin/contracts": "^3.4.0",
-    "truffle": "^5.1.58",
+    "truffle": "^5.4.29",
     "truffle-flattener": "^1.5.0"
   },
   "devDependencies": {

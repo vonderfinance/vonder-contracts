@@ -612,7 +612,7 @@ interface IVDP is IERC20 {
 //     ) external;
 // }
 
-contract VUSDMaster is Ownable, Withdrawable, ReentrancyGuard {
+contract VUSDMasterV2 is Ownable, Withdrawable, ReentrancyGuard {
     using SafeERC20 for IERC20;
     
     IVDP public immutable vdp;
