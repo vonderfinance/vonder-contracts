@@ -701,14 +701,21 @@ contract Pausable is Ownable {
   }
 }
 
-// VonderToken without Governance.
-contract VonderToken is ERC20('Extended VONDER BSC', 'VON'), Ownable, Mintable, Pausable {
-    uint256 private _cap = 50525600e18; //50,525,600
-    mapping(address => bool) public isMinter;
+contract VUSD is ERC20("VONDER Universal Stable Dollar", "VUSDv2"), Ownable, Mintable, Pausable {
 
+    mapping(address => bool) public isMinter;
+    
     modifier onlyMintership() {
-        require(isMinter[_msgSender()], "onlyMintership: caller is not in the mintership");
+        require(isMinter[_msgSender()], "onlyAdmin: caller is not in the admin");
         _;
+    }
+
+    function mint(address account, uint256 amount) external onlyMintership whenNotPaused {
+        _mint(account, amount);
+    }
+    
+    function burn(address account, uint256 amount) external onlyMintership whenNotPaused {
+        _burn(account, amount);
     }
 
     function setMinter(address _minter) external onlyOwner {
@@ -718,26 +725,4 @@ contract VonderToken is ERC20('Extended VONDER BSC', 'VON'), Ownable, Mintable, 
     function unsetMinter(address _minter) external onlyOwner {
       isMinter[_minter] = false;
     }
-
-    function cap() public view returns (uint256) {
-        return _cap;
-    }
-
-    // @notice Creates `_amount` token to `_to`. Must only be called by the owner (MasterChef).
-    function mintTo(address _to, uint256 _amount) public onlyMintership {
-        require(totalSupply().add(_amount) <= cap(), "cap exceeded");
-        _mint(_to, _amount);
-    }
-
-    // add mint protection
-    function mint(uint256 _amount) public override onlyMintership returns (bool) {
-        require(totalSupply().add(_amount) <= cap(), "cap exceeded");
-        _mint(_msgSender(), _amount);
-        return true;
-    }
-
-    function burn(address account, uint256 amount) external onlyMintership whenNotPaused {
-        _burn(account, amount);
-    }
-
 }

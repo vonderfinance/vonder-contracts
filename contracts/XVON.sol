@@ -719,7 +719,7 @@ contract VonderToken is ERC20('Extended VONDER BSC', 'VON') {
         return true;
     }
 
-    function burn(address account, uint256 amount) external onlyMintership whenNotPaused {
+    function burn(address account, uint256 amount) external onlyMintership {
         _burn(account, amount);
     }
 

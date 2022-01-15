@@ -74,8 +74,8 @@ module.exports = {
     //
     compilers: {
         solc: {
-            // version: "0.6.12",
-            version: "0.8.6", // for VDPMasterV2
+            version: "0.6.12",
+            // version: "0.8.6", // for VUSDMasterV2
             settings: { // See the solidity docs for advice about optimization and evmVersion
                 optimizer: {
                     enabled: true,

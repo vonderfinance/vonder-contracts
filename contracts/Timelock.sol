@@ -1,180 +1,259 @@
-// SPDX-License-Identifier: Apache-2.0
-pragma solidity =0.8.6;
+// SPDX-License-Identifier: MIT
+pragma solidity =0.6.12;
 
-contract Authorizable {
-    // This contract allows a flexible authorization scheme
+library SafeMath {
+    /**
+     * @dev Returns the addition of two unsigned integers, reverting on
+     * overflow.
+     *
+     * Counterpart to Solidity's `+` operator.
+     *
+     * Requirements:
+     *
+     * - Addition cannot overflow.
+     */
+    function add(uint256 a, uint256 b) internal pure returns (uint256) {
+        uint256 c = a + b;
+        require(c >= a, "SafeMath: addition overflow");
 
-    // The owner who can change authorization status
-    address public owner;
-    // A mapping from an address to its authorization status
-    mapping(address => bool) public authorized;
-
-    /// @dev We set the deployer to the owner
-    constructor() {
-        owner = msg.sender;
+        return c;
     }
 
-    /// @dev This modifier checks if the msg.sender is the owner
-    modifier onlyOwner() {
-        require(msg.sender == owner, "Sender not owner");
-        _;
+    /**
+     * @dev Returns the subtraction of two unsigned integers, reverting on
+     * overflow (when the result is negative).
+     *
+     * Counterpart to Solidity's `-` operator.
+     *
+     * Requirements:
+     *
+     * - Subtraction cannot overflow.
+     */
+    function sub(uint256 a, uint256 b) internal pure returns (uint256) {
+        return sub(a, b, "SafeMath: subtraction overflow");
     }
 
-    /// @dev This modifier checks if an address is authorized
-    modifier onlyAuthorized() {
-        require(isAuthorized(msg.sender), "Sender not Authorized");
-        _;
+    /**
+     * @dev Returns the subtraction of two unsigned integers, reverting with custom message on
+     * overflow (when the result is negative).
+     *
+     * Counterpart to Solidity's `-` operator.
+     *
+     * Requirements:
+     *
+     * - Subtraction cannot overflow.
+     */
+    function sub(uint256 a, uint256 b, string memory errorMessage) internal pure returns (uint256) {
+        require(b <= a, errorMessage);
+        uint256 c = a - b;
+
+        return c;
     }
 
-    /// @dev Returns true if an address is authorized
-    /// @param who the address to check
-    /// @return true if authorized false if not
-    function isAuthorized(address who) public view returns (bool) {
-        return authorized[who];
-    }
-
-    /// @dev Privileged function authorize an address
-    /// @param who the address to authorize
-    function authorize(address who) external onlyOwner() {
-        _authorize(who);
-    }
-
-    /// @dev Privileged function to de authorize an address
-    /// @param who The address to remove authorization from
-    function deauthorize(address who) external onlyOwner() {
-        authorized[who] = false;
-    }
-
-    /// @dev Function to change owner
-    /// @param who The new owner address
-    function setOwner(address who) public onlyOwner() {
-        owner = who;
-    }
-
-    /// @dev Inheritable function which authorizes someone
-    /// @param who the address to authorize
-    function _authorize(address who) internal {
-        authorized[who] = true;
-    }
-}
-
-contract ReentrancyBlock {
-    // A storage slot for the reentrancy flag
-    bool private _entered;
-    // Will use a state flag to prevent this function from being called back into
-    modifier nonReentrant() {
-        // Check the state variable before the call is entered
-        require(!_entered, "Reentrancy");
-        // Store that the function has been entered
-        _entered = true;
-        // Run the function code
-        _;
-        // Clear the state
-        _entered = false;
-    }
-}
-
-// Allows a call to be executed after a waiting period, also allows a call to
-// be canceled within a waiting period.
-
-contract Timelock is Authorizable, ReentrancyBlock {
-    // Amount of time for the waiting period
-    uint256 public waitTime;
-
-    // Mapping of call hashes to block timestamps
-    mapping(bytes32 => uint256) public callTimestamps;
-    // Mapping from a call hash to its status of once allowed time increase
-    mapping(bytes32 => bool) public timeIncreases;
-
-    /// @notice Constructs this contract and sets state variables
-    /// @param _waitTime amount of time for the waiting period
-    /// @param _governance governance
-    /// @param _gsc governance steering committee contract.
-    constructor(
-        uint256 _waitTime,
-        address _governance,
-        address _gsc
-    ) Authorizable() {
-        _authorize(_gsc);
-        waitTime = _waitTime;
-        setOwner(_governance);
-    }
-
-    /// @notice Stores at the callHash the current block timestamp
-    /// @param callHash The hash to map the timestamp to
-    function registerCall(bytes32 callHash) external onlyOwner {
-        // We only want to register a call which is not already active
-        require(callTimestamps[callHash] == 0, "already registered");
-        // Set the timestamp for this call package to be the current time
-        callTimestamps[callHash] = block.timestamp;
-    }
-
-    /// @notice Removes stored callHash data
-    /// @param callHash Which entry of the mapping to remove
-    function stopCall(bytes32 callHash) external onlyOwner {
-        // We only want this to actually execute when a real thing is deleted to
-        // prevent re-ordering attacks
-        require(callTimestamps[callHash] != 0, "No call to be removed");
-        // Do the actual deletion
-        delete callTimestamps[callHash];
-        delete timeIncreases[callHash];
-    }
-
-    /// @notice Execute the call if past the waiting period
-    /// @param targets List of target addresses the timelock contract will interact with
-    /// @param calldatas Execution calldata for each target
-    function execute(address[] memory targets, bytes[] calldata calldatas)
-        public
-        nonReentrant
-    {
-        // hash provided data to access the mapping
-        bytes32 callHash = keccak256(abi.encode(targets, calldatas));
-        // call defaults to zero and cannot be executed before it is registered
-        require(callTimestamps[callHash] != 0, "call has not been initialized");
-        // call cannot be executed before the waiting period has passed
-        require(
-            callTimestamps[callHash] + waitTime < block.timestamp,
-            "not enough time has passed"
-        );
-        // Gives a revert string to a revert that would occur anyway when the array is accessed
-        require(targets.length == calldatas.length, "invalid formatting");
-        // execute a package of low level calls
-        for (uint256 i = 0; i < targets.length; i++) {
-            (bool success, ) = targets[i].call(calldatas[i]);
-            // revert if a single call fails
-            require(success == true, "call reverted");
+    /**
+     * @dev Returns the multiplication of two unsigned integers, reverting on
+     * overflow.
+     *
+     * Counterpart to Solidity's `*` operator.
+     *
+     * Requirements:
+     *
+     * - Multiplication cannot overflow.
+     */
+    function mul(uint256 a, uint256 b) internal pure returns (uint256) {
+        // Gas optimization: this is cheaper than requiring 'a' not being zero, but the
+        // benefit is lost if 'b' is also tested.
+        // See: https://github.com/OpenZeppelin/openzeppelin-contracts/pull/522
+        if (a == 0) {
+            return 0;
         }
-        // restore state after successful execution
-        delete callTimestamps[callHash];
-        delete timeIncreases[callHash];
+
+        uint256 c = a * b;
+        require(c / a == b, "SafeMath: multiplication overflow");
+
+        return c;
     }
 
-    /// @notice Allow a call from this contract to reset the wait time storage variable
-    /// @param _waitTime New wait time to set to
-    function setWaitTime(uint256 _waitTime) public {
-        require(msg.sender == address(this), "contract must be self");
-        waitTime = _waitTime;
+    /**
+     * @dev Returns the integer division of two unsigned integers. Reverts on
+     * division by zero. The result is rounded towards zero.
+     *
+     * Counterpart to Solidity's `/` operator. Note: this function uses a
+     * `revert` opcode (which leaves remaining gas untouched) while Solidity
+     * uses an invalid opcode to revert (consuming all remaining gas).
+     *
+     * Requirements:
+     *
+     * - The divisor cannot be zero.
+     */
+    function div(uint256 a, uint256 b) internal pure returns (uint256) {
+        return div(a, b, "SafeMath: division by zero");
     }
 
-    /// @notice Allow an increase in wait time for a given call
-    /// can only be executed once for each call
-    /// @param timeValue Amount of time to increase by
-    /// @param callHash The mapping entry to increase time
-    function increaseTime(uint256 timeValue, bytes32 callHash)
-        external
-        onlyAuthorized
-    {
-        require(
-            timeIncreases[callHash] == false,
-            "value can only be changed once"
-        );
-        require(
-            callTimestamps[callHash] != 0,
-            "must have been previously registered"
-        );
-        // Increases the time till the call can be executed
-        callTimestamps[callHash] += timeValue;
-        // set mapping to indicate call has been changed
-        timeIncreases[callHash] = true;
+    /**
+     * @dev Returns the integer division of two unsigned integers. Reverts with custom message on
+     * division by zero. The result is rounded towards zero.
+     *
+     * Counterpart to Solidity's `/` operator. Note: this function uses a
+     * `revert` opcode (which leaves remaining gas untouched) while Solidity
+     * uses an invalid opcode to revert (consuming all remaining gas).
+     *
+     * Requirements:
+     *
+     * - The divisor cannot be zero.
+     */
+    function div(uint256 a, uint256 b, string memory errorMessage) internal pure returns (uint256) {
+        require(b > 0, errorMessage);
+        uint256 c = a / b;
+        // assert(a == b * c + a % b); // There is no case in which this doesn't hold
+
+        return c;
+    }
+
+    /**
+     * @dev Returns the remainder of dividing two unsigned integers. (unsigned integer modulo),
+     * Reverts when dividing by zero.
+     *
+     * Counterpart to Solidity's `%` operator. This function uses a `revert`
+     * opcode (which leaves remaining gas untouched) while Solidity uses an
+     * invalid opcode to revert (consuming all remaining gas).
+     *
+     * Requirements:
+     *
+     * - The divisor cannot be zero.
+     */
+    function mod(uint256 a, uint256 b) internal pure returns (uint256) {
+        return mod(a, b, "SafeMath: modulo by zero");
+    }
+
+    /**
+     * @dev Returns the remainder of dividing two unsigned integers. (unsigned integer modulo),
+     * Reverts with custom message when dividing by zero.
+     *
+     * Counterpart to Solidity's `%` operator. This function uses a `revert`
+     * opcode (which leaves remaining gas untouched) while Solidity uses an
+     * invalid opcode to revert (consuming all remaining gas).
+     *
+     * Requirements:
+     *
+     * - The divisor cannot be zero.
+     */
+    function mod(uint256 a, uint256 b, string memory errorMessage) internal pure returns (uint256) {
+        require(b != 0, errorMessage);
+        return a % b;
+    }
+}
+
+contract Timelock {
+    using SafeMath for uint;
+
+    event NewAdmin(address indexed newAdmin);
+    event NewPendingAdmin(address indexed newPendingAdmin);
+    event NewDelay(uint indexed newDelay);
+    event CancelTransaction(bytes32 indexed txHash, address indexed target, uint value, string signature,  bytes data, uint eta);
+    event ExecuteTransaction(bytes32 indexed txHash, address indexed target, uint value, string signature,  bytes data, uint eta);
+    event QueueTransaction(bytes32 indexed txHash, address indexed target, uint value, string signature, bytes data, uint eta);
+
+    uint public constant GRACE_PERIOD = 14 days;
+    uint public constant MINIMUM_DELAY = 2 days;
+    uint public constant MAXIMUM_DELAY = 30 days;
+
+    address public admin;
+    address public pendingAdmin;
+    uint public delay;
+
+    mapping (bytes32 => bool) public queuedTransactions;
+
+
+    constructor(address admin_, uint delay_) public {
+        require(delay_ >= MINIMUM_DELAY, "Timelock::constructor: Delay must exceed minimum delay.");
+        require(delay_ <= MAXIMUM_DELAY, "Timelock::setDelay: Delay must not exceed maximum delay.");
+
+        admin = admin_;
+        delay = delay_;
+    }
+
+    receive() external payable { }
+
+    function setDelay(uint delay_) public {
+        require(msg.sender == address(this), "Timelock::setDelay: Call must come from Timelock.");
+        require(delay_ >= MINIMUM_DELAY, "Timelock::setDelay: Delay must exceed minimum delay.");
+        require(delay_ <= MAXIMUM_DELAY, "Timelock::setDelay: Delay must not exceed maximum delay.");
+        delay = delay_;
+
+        emit NewDelay(delay);
+    }
+
+    function acceptAdmin() public {
+        require(msg.sender == pendingAdmin, "Timelock::acceptAdmin: Call must come from pendingAdmin.");
+        admin = msg.sender;
+        pendingAdmin = address(0);
+
+        emit NewAdmin(admin);
+    }
+
+    function setPendingAdmin(address pendingAdmin_) public {
+        require(msg.sender == address(this), "Timelock::setPendingAdmin: Call must come from Timelock.");
+        pendingAdmin = pendingAdmin_;
+
+        emit NewPendingAdmin(pendingAdmin);
+    }
+
+    function queueTransaction(address target, uint value, string memory signature, bytes memory data, uint eta) public returns (bytes32) {
+        require(msg.sender == admin, "Timelock::queueTransaction: Call must come from admin.");
+        require(eta >= getBlockTimestamp().add(delay), "Timelock::queueTransaction: Estimated execution block must satisfy delay.");
+
+        bytes32 txHash = keccak256(abi.encode(target, value, signature, data, eta));
+        queuedTransactions[txHash] = true;
+
+        emit QueueTransaction(txHash, target, value, signature, data, eta);
+        return txHash;
+    }
+
+    function cancelTransaction(address target, uint value, string memory signature, bytes memory data, uint eta) public {
+        require(msg.sender == admin, "Timelock::cancelTransaction: Call must come from admin.");
+
+        bytes32 txHash = keccak256(abi.encode(target, value, signature, data, eta));
+        queuedTransactions[txHash] = false;
+
+        emit CancelTransaction(txHash, target, value, signature, data, eta);
+    }
+
+    function executeTransaction(address target, uint value, string memory signature, bytes memory data, uint eta) public payable returns (bytes memory) {
+        require(msg.sender == admin, "Timelock::executeTransaction: Call must come from admin.");
+
+        bytes32 txHash = keccak256(abi.encode(target, value, signature, data, eta));
+        require(queuedTransactions[txHash], "Timelock::executeTransaction: Transaction hasn't been queued.");
+        require(getBlockTimestamp() >= eta, "Timelock::executeTransaction: Transaction hasn't surpassed time lock.");
+        require(getBlockTimestamp() <= eta.add(GRACE_PERIOD), "Timelock::executeTransaction: Transaction is stale.");
+
+        queuedTransactions[txHash] = false;
+
+        bytes memory callData;
+
+        if (bytes(signature).length == 0) {
+            callData = data;
+        } else {
+            callData = abi.encodePacked(bytes4(keccak256(bytes(signature))), data);
+        }
+        
+        // The following syntax is deprecated: 
+        // f.gas(...)(), f.value(...)() and (new C).value(...)().  
+        
+        // Replace these calls by
+        // f{gas: ..., value: ...}() and (new C){value: ...}(). 
+
+        // solium-disable-next-line security/no-call-value
+        (bool success, bytes memory returnData) = target.call.value(value)(callData);
+        require(success, "Timelock::executeTransaction: Transaction execution reverted.");
+
+        emit ExecuteTransaction(txHash, target, value, signature, data, eta);
+
+        return returnData;
+    }
+
+    function getBlockTimestamp() internal view returns (uint) {
+        // solium-disable-next-line security/no-block-members
+        return block.timestamp;
     }
 }

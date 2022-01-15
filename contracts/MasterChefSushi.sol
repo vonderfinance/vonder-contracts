@@ -2,7 +2,7 @@
 
 pragma solidity =0.6.12;
 
-import "./VDP.sol";
+import "./VUSD.sol";
 
 library Address {
     /**
@@ -420,7 +420,7 @@ contract MasterChef is Ownable {
         uint256 accSushiPerShare; // Accumulated SUSHIs per share, times 1e12. See below.
     }
     // The SUSHI TOKEN!
-    VDP public sushi;
+    VUSD public sushi;
     // Dev address.
     address public devaddr;
     // Block number when bonus SUSHI period ends.
@@ -460,7 +460,7 @@ contract MasterChef is Ownable {
     
 
     constructor(
-        VDP _sushi,
+        VUSD _sushi,
         address _devaddr,
         uint256 _sushiPerBlock,
         uint256 _startBlock,
